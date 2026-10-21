@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
 </head>
+
 <body>
   <div class="app-shell">
 
@@ -76,7 +77,9 @@
             A little progress is still progress. Let's get things done.
           </p>
         </div>
-
+        <div class="update-banner">
+          🚀 NEW UPDATE: FocusFlow is now running with CI/CD!
+        </div>
         <div class="date-card">
           <div class="date-icon">▦</div>
           <div>
@@ -159,14 +162,8 @@
 
           <form id="task-form" class="task-form">
             <label class="sr-only" for="task-input">New task</label>
-            <input
-              id="task-input"
-              type="text"
-              maxlength="100"
-              placeholder="What do you need to get done?"
-              autocomplete="off"
-              required
-            >
+            <input id="task-input" type="text" maxlength="100" placeholder="What do you need to get done?"
+              autocomplete="off" required>
 
             <select id="task-priority" aria-label="Task priority">
               <option value="medium">Medium</option>
@@ -183,23 +180,11 @@
             </span>
 
             <div class="filters" aria-label="Filter tasks">
-              <button
-                type="button"
-                class="filter-btn selected"
-                data-filter="all"
-              >All</button>
+              <button type="button" class="filter-btn selected" data-filter="all">All</button>
 
-              <button
-                type="button"
-                class="filter-btn"
-                data-filter="active"
-              >Active</button>
+              <button type="button" class="filter-btn" data-filter="active">Active</button>
 
-              <button
-                type="button"
-                class="filter-btn"
-                data-filter="completed"
-              >Done</button>
+              <button type="button" class="filter-btn" data-filter="completed">Done</button>
             </div>
           </div>
 
@@ -217,11 +202,7 @@
               Stored on this device
             </span>
 
-            <button
-              id="clear-completed"
-              type="button"
-              class="text-button"
-            >Clear completed</button>
+            <button id="clear-completed" type="button" class="text-button">Clear completed</button>
           </div>
         </article>
 
@@ -243,26 +224,10 @@
             </p>
 
             <div class="timer-wrap">
-              <svg
-                class="timer-ring"
-                viewBox="0 0 220 220"
-                role="img"
-                aria-label="Focus session countdown"
-              >
-                <circle
-                  class="timer-track"
-                  cx="110"
-                  cy="110"
-                  r="96"
-                ></circle>
+              <svg class="timer-ring" viewBox="0 0 220 220" role="img" aria-label="Focus session countdown">
+                <circle class="timer-track" cx="110" cy="110" r="96"></circle>
 
-                <circle
-                  class="timer-progress"
-                  id="timer-progress"
-                  cx="110"
-                  cy="110"
-                  r="96"
-                ></circle>
+                <circle class="timer-progress" id="timer-progress" cx="110" cy="110" r="96"></circle>
               </svg>
 
               <div class="timer-center">
@@ -275,23 +240,11 @@
             </div>
 
             <div class="timer-presets">
-              <button
-                class="preset active"
-                data-minutes="25"
-                type="button"
-              >25 min</button>
+              <button class="preset active" data-minutes="25" type="button">25 min</button>
 
-              <button
-                class="preset"
-                data-minutes="15"
-                type="button"
-              >15 min</button>
+              <button class="preset" data-minutes="15" type="button">15 min</button>
 
-              <button
-                class="preset"
-                data-minutes="5"
-                type="button"
-              >5 min</button>
+              <button class="preset" data-minutes="5" type="button">5 min</button>
             </div>
 
             <div class="timer-actions">
@@ -299,12 +252,7 @@
                 ▶ Start focus
               </button>
 
-              <button
-                id="timer-reset"
-                class="timer-reset"
-                type="button"
-                aria-label="Reset timer"
-              >↺</button>
+              <button id="timer-reset" class="timer-reset" type="button" aria-label="Reset timer">↺</button>
             </div>
 
             <p class="timer-note">Stay present. Ignore the noise.</p>
@@ -342,4 +290,5 @@
     </main>
   </div>
 </body>
+
 </html>
