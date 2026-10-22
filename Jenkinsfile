@@ -1,6 +1,6 @@
 
 pipeline {
-    agent any
+    agent none
 
     options {
         timestamps()
@@ -13,15 +13,13 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout, Validate and Test') {
+            agent {
+                label 'linux-builder'
+            }
             steps {
                 checkout scm
-                echo 'FocusFlow source code checked out.'
-            }
-        }
 
-        stage('Validate Project Files') {
-            steps {
                 sh '''
                     set -eu
                     test -f index.html
@@ -29,24 +27,20 @@ pipeline {
                     test -f script.js
                     test -f Dockerfile
                     test -f README.md
-                    echo "Required files validated."
-                '''
-            }
-        }
 
-        stage('Build and Test') {
-            steps {
-                sh '''
-                    set -eu
                     grep -q '<html' index.html
                     grep -q 'function' script.js ||
-                    grep -q 'addEventListener' script.js
-                    echo "Basic source validation passed."
+                        grep -q 'addEventListener' script.js
+
+                    echo "FocusFlow files and basic source checks passed."
                 '''
             }
         }
 
         stage('Build Docker Image') {
+            agent {
+                label 'linux-builder'
+            }
             steps {
                 sh '''
                     set -eu
@@ -58,6 +52,9 @@ pipeline {
         }
 
         stage('Push to Docker Hub') {
+            agent {
+                label 'linux-builder'
+            }
             steps {
                 withCredentials([
                     usernamePassword(
@@ -68,9 +65,8 @@ pipeline {
                 ]) {
                     sh '''
                         set +x
-                        echo "$DOCKER_TOKEN" | \
-                          docker login -u "$DOCKER_USER" \
-                          --password-stdin
+                        echo "$DOCKER_TOKEN" |
+                          docker login -u "$DOCKER_USER" --password-stdin
                         docker push ${DOCKERHUB_REPO}:${IMAGE_TAG}
                         docker push ${DOCKERHUB_REPO}:latest
                         docker logout
@@ -84,7 +80,6 @@ pipeline {
                 label 'windows-minikube'
             }
             steps {
-                echo 'Deploying FocusFlow to Minikube on Windows.'
                 bat '''
                     kubectl set image deployment/focusflow focusflow=%DOCKERHUB_REPO%:%IMAGE_TAG%
                     if errorlevel 1 exit /b 1
@@ -100,7 +95,6 @@ pipeline {
                 bat '''
                     kubectl rollout status deployment/focusflow --timeout=180s
                     if errorlevel 1 exit /b 1
-
                     kubectl get deployment focusflow
                     kubectl get pods -l app=focusflow
                     kubectl get service focusflow
