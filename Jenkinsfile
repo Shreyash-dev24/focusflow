@@ -39,7 +39,7 @@ pipeline {
                 sh '''
                     set -eu
                     grep -q '<html' index.html
-                    grep -q 'function' script.js || \
+                    grep -q 'function' script.js ||
                     grep -q 'addEventListener' script.js
                     echo "Basic source validation passed."
                 '''
@@ -49,6 +49,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
+                    set -eu
                     docker build \
                       -t ${DOCKERHUB_REPO}:${IMAGE_TAG} \
                       -t ${DOCKERHUB_REPO}:latest .
@@ -77,11 +78,40 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy to Kubernetes') {
+            agent {
+                label 'windows-minikube'
+            }
+            steps {
+                echo 'Deploying FocusFlow to Minikube on Windows.'
+                bat '''
+                    kubectl set image deployment/focusflow focusflow=%DOCKERHUB_REPO%:%IMAGE_TAG%
+                    if errorlevel 1 exit /b 1
+                '''
+            }
+        }
+
+        stage('Verify Kubernetes Deployment') {
+            agent {
+                label 'windows-minikube'
+            }
+            steps {
+                bat '''
+                    kubectl rollout status deployment/focusflow --timeout=180s
+                    if errorlevel 1 exit /b 1
+
+                    kubectl get deployment focusflow
+                    kubectl get pods -l app=focusflow
+                    kubectl get service focusflow
+                '''
+            }
+        }
     }
 
     post {
         success {
-            echo 'FocusFlow image built and published successfully.'
+            echo 'FocusFlow image built, published, and deployed successfully.'
         }
         failure {
             echo 'Pipeline failed. Check the stage logs.'
